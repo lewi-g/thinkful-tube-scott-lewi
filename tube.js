@@ -1,18 +1,13 @@
 const YouTube_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
 
-let RESULT_HTML_TEMPLATE = (
-  '<div>' +
-    '<h2>' +// thumbnail
-    '<a> href="http://youtube.com/watch?v=${videoId}"> +
-    '<img link> </a>' +
-    '<a class="js-result-name" href="" target="_blank"></a>' //by 
-   	// '<a class="js-title" href="" target="_blank"></a></h2>' +
-   	// '<p>Number of watchers: <span class="js-watchers-count"></span></p>' + 
-    //'<p>Number of open issues: <span class="js-issues-count"></span></p>' +
-  '</div>'
-);
-let vidoeId = object.id.videoId
-let videoThumbnail = object.snippet.thumbnais.medium.url
+let RESULT_HTML_TEMPLATE = (`
+  <div>
+    <a class="js-result-name" href="">
+      <img class="js-thumbnail" src="">
+    </a>
+  </div>
+  `);
+
 function getDataFromApi(searchTerm, callback) {
   var query = {
   	part: 'snippet',
@@ -20,6 +15,35 @@ function getDataFromApi(searchTerm, callback) {
     q: 'searchTerm',
     per_page: 5
   }
-  $.getJSON(YouTube_SEARCH_URL, query, function(data) {console.log(data);});
+  $.getJSON(YouTube_SEARCH_URL, query, callback);
 }
 
+function renderResult(result) {
+  var template = $(RESULT_HTML_TEMPLATE);
+  template.find(".js-result-name").attr("href", `http://youtube.com/watch?v=${result.id.videoId}`);
+  template.find(".js-thumbnail").attr("src", `${result.snippet.thumbnais.medium.url}`)
+
+  // template.find(".js-user-name").text(result.owner.login).attr("href", result.owner.html_url);
+
+  return template;
+}
+
+function displayYouTubeData(data) {
+  var results = data.items.map(function(item, index) {
+    return renderResult(item);
+  });
+  $('.js-search-results').html(results);
+}
+
+function watchSubmit() {
+  $('.js-search-form').submit(function(event) {
+    event.preventDefault();
+    var queryTarget = $(event.currentTarget).find('.js-query');
+    var query = queryTarget.val();
+    // clear out the input
+    queryTarget.val("");
+    getDataFromApi(query, displayYouTubeData);
+  });
+}
+
+$(watchSubmit);
