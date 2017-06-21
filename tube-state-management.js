@@ -3,8 +3,12 @@
 //3. render functions
 //4. event listener
 
+const stateObject = {
+	items: []
+}
 
-const YouTube_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
+// state manipulation functions
+//const YouTube_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
 
 let RESULT_HTML_TEMPLATE = (`
   <div>
@@ -12,11 +16,14 @@ let RESULT_HTML_TEMPLATE = (`
       <img class="js-thumbnail" src="">
       <h2 class="title"> </h2>
     </a>
-  </div>
-  `);
+  </div>`)
+ 
+
+// function to add to state before displaying it 
 
 
-function displayYouTubeData(data) {
+
+function displayYouTubeData(data)/* find data from state*/ {
   var results = data.items.map(function(item, index) {
     return renderResult(item);
   });
@@ -41,24 +48,25 @@ function renderResult(result) {
 
 
 // 4 Event listener functions
-function getDataFromApi(searchTerm, callback) {
+function getDataFromApi(searchTerm, callback, endpointUrl) {
   var query = {
   	part: 'snippet',
   	key: 'AIzaSyAsg49O_ihb6En3k6NV0K-6e__l4XWZaBI',
     q: searchTerm,
     per_page: 5
   }
-  $.getJSON(YouTube_SEARCH_URL, query, callback);
+  $.getJSON(endpointUrl, query, callback);
 }
 
 function watchSubmit() {
   $('.js-search-form').submit(function(event) {
     event.preventDefault();
+    const youTubeUrl = $(event.currentTarget).attr('action')
     var queryTarget = $(event.currentTarget).find('.js-query');
     var query = queryTarget.val();
     // clear out the input
     queryTarget.val("");
-    getDataFromApi(query, displayYouTubeData);
+    getDataFromApi(query, displayYouTubeData, youTubeUrl);
   });
 }
 
