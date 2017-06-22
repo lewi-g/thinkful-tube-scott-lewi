@@ -62,7 +62,7 @@ function renderResult(result) {
 function getDataFromApi(searchTerm, callback, endpointUrl) {
   var query = {
   	part: 'snippet',
-  	key: 'AIzaSyAsg49O_ihb6En3k6NV0K-6e__l4XWZaBI',
+  	key: 'insert your key here',
     q: searchTerm,
   }
   $.getJSON(endpointUrl, query, callback);
